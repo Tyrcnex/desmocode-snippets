@@ -1,6 +1,4 @@
-// Get compute context (compiled version of functions)
 // Made by AutisticMofo and modified by Slimrunner
-// Paste this into your browser console
 
 function computeContext() {
     // Emulate what happens in the web worker

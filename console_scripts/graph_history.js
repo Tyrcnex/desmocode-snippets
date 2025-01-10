@@ -1,6 +1,3 @@
-// Desmos doesn't have an easy way to trace the graph history of a certain link.
-// (you might have to wait a while)
-
 const mLink = (calc, hash) => `https://www.desmos.com/${calc}/${hash}`;
 
 async function findHistory(
@@ -22,3 +19,4 @@ async function findHistory(
 
 // use it like this:
 // findHistory("https://www.desmos.com/calculator/abcdef0000")
+// you might have to wait a while
