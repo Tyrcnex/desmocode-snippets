@@ -7,6 +7,7 @@ You can find scripts to use in the console to leverage the Desmos API, or you ca
 The userscripts in this repository include:
 - `better3d.user.js`: A collection of useful features for Desmos's 3D calculator. This includes appending the `?beta3d` flag (for access to shaders, surface opacity, etc.), adding a background color, changing the specular, etc.
 - `desmolocal.user.js`: Allows you to save Desmos graphs as files. Adds two buttons next to the "Save" button - the first is "Save JSON", which saves the graph as a JSON file, and "Import JSON", which imports the saved file into Desmos.
+- `fix_code_golf.js`: Turns off the Desmodder "Code Golf" plugin by default and binds the plugin toggle to "Alt + Q". This is a somewhat niche script and might become obsolete when Desmodder releases some updates.
 - `godmode.user.js`: Increases the list limit, shader list limit, and tolerance of "nested too deeply" error
 - `keyboard_input.user.js`: Adds keyboard input to Desmos. Paste `K_{eys}=[]` into your graph, and keycodes will now be updated in `K_{eys}`.
 - `lower_error_message.user.js`: Lowers the dang error message so you can actually see the expression.
