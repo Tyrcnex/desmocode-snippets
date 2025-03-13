@@ -1,0 +1,8 @@
+/* monospace folders/notes */
+.dcg-expressionfolder, .dcg-expressiontext {
+    font-family: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+.dcg-expressionfolder {
+    font-weight: 500;
+}
