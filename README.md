@@ -10,9 +10,10 @@ The userscripts in this repository include:
 - `godmode.user.js`: Increases the list limit, shader list limit, and tolerance of "nested too deeply" error
 - `keyboard_input.user.js`: Adds keyboard input to Desmos. Paste `K_{eys}=[]` into your graph, and keycodes will now be updated in `K_{eys}`.
 - `lower_error_message.user.js`: Lowers the dang error message so you can actually see the expression.
-- `secret_functions.user.js`: Unlocks some secret functions that are disabled through Mathquill. These functions include `hypot`, `polyGamma`, `argmin`, and more.
+- `secret_functions.user.js`: Unlocks some secret functions that are disabled through Mathquill. These functions include `hypot`, `polyGamma`, `argmin`, and more. Some are unusable, such as `validateSampleCount`.
 
 The console scripts in this repository include:
 - `dispatch.js`: A small tutorial to use Desmos's event listener, useful for making scripts that run when a certain event is triggered (e.g. clicking an expression, moving the graph, graph state change, etc.).
 - `get_context.js`: Gets the compute context (compiled version of Desmos functions)
 - `graph_history.js`: Desmos doesn't have an easy way to trace the graph history of a certain link, so this script does so.
+- `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). Adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, `step`, and `ID` constants. `ID` is a little hard to obtain, but you can either use Desmodder's "Calculator Settings > Show IDs" (recommended) or add "?showIDs" to the end of your URL, then read off the number that replaced the line number.
