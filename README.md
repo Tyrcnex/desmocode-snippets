@@ -7,7 +7,7 @@ You can find scripts to use in the console to leverage the Desmos API, install u
 ## Userscripts
 The userscripts in this repository are located in `/userscripts`. They include:
 - `better3d.user.js`: A collection of useful features for Desmos's 3D calculator. This includes appending the `?beta3d` flag (for access to shaders, surface opacity, etc.), adding a background color, changing the specular, etc.
-- `desmolocal.user.js`: Allows you to save Desmos graphs as files. Adds two buttons next to the "Save" button - the first is "Save JSON", which saves the graph as a JSON file, and "Import JSON", which imports the saved file into Desmos.
+- `desmolocal.user.js`: Adds additional UI to save, load, or copy graphs in a JSON format. Useful if you want to save graphs to your own device or send a graph to someone as a file rather than a link. Also, vanilla Desmos now allows you to paste JSON into Desmos and automatically replace the graph state, so this userscript is useful for copying that JSON.
 - `fix_code_golf.js`: Turns off the Desmodder "Code Golf" plugin by default and binds the plugin toggle to "Alt + Q". This is a somewhat niche script and might become obsolete when Desmodder releases some updates.
 - `godmode.user.js`: Increases the list limit, shader list limit, and tolerance of "nested too deeply" error
 - `keyboard_input.user.js`: Adds keyboard input to Desmos. Paste `K_{eys}=[]` into your graph, and keycodes will now be updated in `K_{eys}`.
@@ -19,7 +19,7 @@ The console scripts in this repository are located in `/console_scripts`. They i
 - `dispatch.js`: A small tutorial to use Desmos's event listener, useful for making scripts that run when a certain event is triggered (e.g. clicking an expression, moving the graph, graph state change, etc.).
 - `get_context.js`: Gets the compute context (compiled version of Desmos functions)
 - `graph_history.js`: Desmos doesn't have an easy way to trace the graph history of a certain link, so this script does so.
-- `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). Adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, `step`, and `ID` constants. `ID` is a little hard to obtain, but you can either use Desmodder's "Calculator Settings > Show IDs" (recommended) or add "?showIDs" to the end of your URL, then read off the number that replaced the line number.
+- `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). Adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, `step`, and `ID` constants. `ID` is a little hard to obtain, but you can either use Desmodder's "Calculator Settings > Show IDs" (recommended) or add "?showIDs" to the end of your URL, then read off the number that replaced the line number (this finicky behavior may be modified in the future).
 
 ## Stylesheets
 The stylesheets in this repository are located in `/styles`. They include:
