@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Desmos Local
-// @version      0.4
+// @version      0.5
 // @description  Allow for saving Desmos graphs as JSON files and importing Desmos graphs saved as JSON or TXT files.
 // @author       tyrcnex & ronwnor
 // @match        https://*.desmos.com/calculator*
@@ -10,129 +10,139 @@
 // @grant        none
 // ==/UserScript==
 
+// compiled with ts, then modified a bit
+
 // wait for calc
-await new Promise(res => setInterval(() => Calc && res(), 200));
-
+await new Promise((res) => setInterval(() => Calc && res(), 200)).then(setup);
+function setup() {
+    createContainers().forEach((container) => {
+        let { saveBtn, loadBtn } = createButtons();
+        container.append(saveBtn, loadBtn);
+    });
+}
 function createButtons() {
-    const saveBtn = document.createElement("div");
-    saveBtn.className = "dcg-unstyled-button dcg-action-save dcg-btn-blue";
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "dcg-unstyled-button dcg-action-save dcg-save-button dcg-btn-blue";
     const loadBtn = saveBtn.cloneNode();
-    saveBtn.innerText = "Save JSON";
-    loadBtn.innerText = "Load JSON";
-
+    saveBtn.textContent = "Save JSON";
+    loadBtn.textContent = "Load JSON";
     saveBtn.onclick = handleSave;
     loadBtn.onclick = handleImport;
-
     return { saveBtn, loadBtn };
 }
+function createContainers() {
+    // pc
+    let oldSaveBtnContainer = document.querySelector(".save-btn-container");
+    // mobile
+    let oldGraphsTitleBar = document.querySelector(".dcg-mygraphs-section-title-container");
 
-// opens a custom save dialog
+    let saveBtnContainer = oldSaveBtnContainer.cloneNode(true);
+    saveBtnContainer.innerHTML = "";
+    let graphsTitleBar = oldGraphsTitleBar.cloneNode(true);
+    oldSaveBtnContainer.after(saveBtnContainer);
+
+    let jsonTitleBar = graphsTitleBar.cloneNode(true);
+    let mobileSaveBtnContainer = document.createElement("div");
+    oldGraphsTitleBar.before(jsonTitleBar);
+    jsonTitleBar.after(mobileSaveBtnContainer);
+    jsonTitleBar.firstChild.innerText = "local save";
+    mobileSaveBtnContainer.className = "save-btn-container graph-link-container";
+    mobileSaveBtnContainer.style.display = "flex";
+    mobileSaveBtnContainer.style.justifyContent = "space-around";
+    mobileSaveBtnContainer.style.padding = "14px";
+    mobileSaveBtnContainer.style.height = "auto";
+    saveBtnContainer.style.display = "flex";
+    saveBtnContainer.style.gap = "5px";
+    saveBtnContainer.style.margin = "0px 5px";
+    return [saveBtnContainer, mobileSaveBtnContainer];
+}
 function handleSave(e) {
     e.preventDefault();
-    e.stopPropagation();
-    // open save dialog
-    Calc._calc.globalHotkeys.shellController.openSaveDialog();
-
-    // rename dialog header
-    document.querySelector("#save-dialog h1").innerText = "Save as JSON";
-
-    // get the form element
-    let form = document.querySelector("#save-dialog form");
-    // ...and kill it, and replace it with its clone.
-    // we must do this to purge the *event listeners*
-    form.parentNode.appendChild(form.cloneNode(true));
-    form.remove();
-    form = document.querySelector("#save-dialog form");
-
-    // clone the save button as a copy button
-    let saveBtn = form.querySelector("button");
-    let copyBtn = saveBtn.cloneNode();
-    copyBtn.innerText = "Copy";
-    saveBtn.before(copyBtn);
-
-    // handle the clicc.
-    form.onsubmit = e => {
-        // prevent exiting the page etc
+    const modal = openModal();
+    modal.header.innerText = "Save as JSON";
+    modal.button0.innerText = "Copy";
+    modal.button1.innerText = "Save";
+    modal.form.onsubmit = (e) => {
         e.preventDefault();
-
-        let stateJSON = JSON.stringify(Calc.getState(), null, 4);
-
-        if (e.submitter.innerText == "Copy") {
-            //copy the state to clipboard
-            navigator.clipboard.writeText(stateJSON);
-            // show toast
-            Calc.controller.dispatch({
-                type: "toast/show",
-                toast: { message: "copied state to clipboard" },
-            });
+        const graphState = JSON.stringify(Calc.getState(), null, 4);
+        if (e.submitter?.innerText == "Copy") {
+            navigator.clipboard.writeText(graphState);
+            toast("copied state to clipboard");
         } else {
-            // get the inputted title
-            let input = form.querySelector("input");
-            let title = input.value;
-
-            // download the graph state
-            download(stateJSON, title + ".json");
+            const title = modal.input.value;
+            download(graphState, title + ".json");
         }
-
-        // finally, close the modal.
-        // shellController.closeModal() doens't work for some reason,
-        // so I'm using the dispatcher instead.
-        Calc._calc.globalHotkeys.shellController.dispatch({ type: "close-modal" });
+        modal.close();
     };
 }
-
-// imports a file and sets the graph state
-async function handleImport(e) {
+function handleImport(e) {
     e.preventDefault();
-    e.stopPropagation();
-    // get the input element
-    let input = document.querySelector("#importInput");
-    if (!input) {
-        input = document.createElement("input");
-        input.id = "importInput";
-        input.type = "file";
-        input.accept = ".json, .txt";
-    }
-    // load the JSON, and setState
-    input.onchange = async f => {
-        // file reader API, I'm not too familiar with it
-        let file = f.target.files[0];
-        let reader = new FileReader();
+    const dropZone = createDropZone();
+    const modal = openModal();
+    modal.header.after(dropZone.element);
+    modal.header.remove();
+    modal.button0.innerText = "Import";
+    modal.button1.innerText = "Open";
+    modal.input.value = "";
+    modal.input.placeholder = "Or paste here...";
+    modal.input.maxLength = 1_000_000_000;
+    const graph = {};
+    dropZone.input.onchange = async (e) => {
+        // @ts-ignore
+        const file = e.target?.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
         reader.readAsText(file);
-
-        reader.onload = readerEvent => {
-            let fileContent = readerEvent.target.result;
-            let parsedObj;
-            try {
-                parsedObj = JSON.parse(fileContent);
-            } catch (err) {
-                // show toast in case of error
-                Calc.controller.dispatch({
-                    type: "toast/show",
-                    toast: { message: err },
-                });
-                console.error(err);
-                return;
-            }
-
-            // set the state from the file
-            Calc.setState(parsedObj, { allowUndo: true });
-
-            // show toast like vanilla desmos
-            Calc.controller.dispatch({
-                type: "toast/show",
-                toast: {
-                    message: `opened "${file.name}"`,
-                    undoCallback: Calc.undo,
-                },
-            });
+        reader.onload = (e) => {
+            const fileContent = e.target?.result;
+            graph.state = fileContent;
+            graph.title = file.name;
+            dropZone.updateLabel(graph.title, file.size);
         };
     };
-
-    input.click();
+    dropZone.element.ondrop = async (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer?.files?.[0];
+        if (!file) return;
+        graph.state = await file.text();
+        graph.title = file.name;
+        dropZone.updateLabel(graph.title, file.size);
+    };
+    modal.input.onchange = () => {
+        const content = modal.input.value;
+        if (content.length == 0) return;
+        graph.state = content;
+        graph.title = "Untitled Graph";
+        dropZone.updateLabel(graph.title, graph.state.length);
+    };
+    modal.input.onpaste = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        graph.state = e.clipboardData.getData("text/plain");
+        graph.title = "Untitled Graph";
+        dropZone.updateLabel(graph.title, graph.state.length);
+    };
+    modal.form.onsubmit = (e) => {
+        e.preventDefault();
+        let parsedState;
+        try {
+            parsedState = JSON.parse(graph.state);
+        } catch (err) {
+            toast(err);
+            console.error(err);
+            return;
+        }
+        if (e.submitter?.innerText == "Open") {
+            Calc.setState(parsedState, { allowUndo: true });
+            toast(`opened ${graph.title}`, { undoCallback: Calc.undo });
+        } else {
+            let state = mergeStates(Calc.getState(), parsedState);
+            Calc.setState(state, { allowUndo: true });
+            toast(`imported ${graph.title}`, { undoCallback: Calc.undo });
+        }
+        modal.close();
+    };
 }
-
-// download string as json file
 function download(content, filename) {
     let file = new Blob([content], { type: "application/json" });
     let link = document.createElement("a");
@@ -146,29 +156,89 @@ function download(content, filename) {
         window.URL.revokeObjectURL(url);
     }, 0);
 }
-
-// pc
-let saveBtnContainer = document.querySelector(".save-btn-container");
-
-// mobile: clone the title bar and create a custom button container
-let graphsTitleBar = document.querySelector(".dcg-mygraphs-section-title-container");
-let jsonTitleBar = graphsTitleBar.cloneNode(true);
-let mobileSaveBtnContainer = document.createElement("div");
-graphsTitleBar.before(jsonTitleBar);
-jsonTitleBar.after(mobileSaveBtnContainer);
-jsonTitleBar.firstChild.innerText = "local save";
-
-mobileSaveBtnContainer.className = "save-btn-container graph-link-container";
-mobileSaveBtnContainer.style.display = "flex";
-mobileSaveBtnContainer.style.justifyContent = "space-around";
-mobileSaveBtnContainer.style.padding = "14px";
-mobileSaveBtnContainer.style.height = "auto";
-
-saveBtnContainer.style.display = "flex";
-saveBtnContainer.style.gap = "5px";
-
-// append the buttons to both containers
-[saveBtnContainer, mobileSaveBtnContainer].forEach(container => {
-    let { saveBtn, loadBtn } = createButtons();
-    container.append(saveBtn, loadBtn);
-});
+function openModal() {
+    Calc._calc.globalHotkeys.shellController.openSaveDialog();
+    const modal = document.querySelector("#save-dialog");
+    let oldForm = modal.querySelector("#save-dialog form");
+    // ...and kill it, and replace it with its clone.
+    // we must do this to purge the *event listeners*
+    const form = oldForm.cloneNode(true);
+    oldForm.parentNode.appendChild(form);
+    oldForm.remove();
+    let header = modal.querySelector("h1");
+    // clone the save button as a copy button
+    let button0 = form.querySelector("button");
+    let button1 = button0.cloneNode();
+    button0.before(button1);
+    let input = form.querySelector("input");
+    let close = () =>
+        Calc._calc.globalHotkeys.shellController.dispatch({ type: "close-modal" });
+    return {
+        modal,
+        header,
+        form,
+        input,
+        button0,
+        button1,
+        close,
+    };
+}
+function createDropZone() {
+    const dropZoneElement = document.createElement("div");
+    const dropZoneLabel = document.createElement("span");
+    const dropZoneInput = document.createElement("input");
+    dropZoneElement.onclick = () => dropZoneInput.click();
+    dropZoneLabel.innerText = "Drop JSON here";
+    dropZoneInput.type = "file";
+    dropZoneInput.accept = ".json, .txt";
+    dropZoneInput.style.display = "none";
+    dropZoneElement.style = `
+  width: 100%;
+  margin-bottom: 20px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px #bbb dashed;
+  border-radius: 5px;
+  color: #aaa;
+  cursor: pointer;
+`;
+    dropZoneElement.append(dropZoneLabel, dropZoneInput);
+    const updateLabel = (name, size) => {
+        dropZoneLabel.innerText = `${name} (${size} bytes)`;
+    };
+    return {
+        element: dropZoneElement,
+        input: dropZoneInput,
+        updateLabel,
+    };
+}
+function mergeStates(baseState, newState) {
+    const expressions = newState.expressions.list;
+    let folderIdsMap = new Map(
+        expressions
+            .filter((e) => e.type == "folder")
+            .map((e) => [e.id, Calc.controller.generateId()])
+    );
+    expressions.forEach((e) => {
+        if (e.type == "folder") {
+            e.id = folderIdsMap[e.id];
+            return;
+        }
+        if (e.type == "expression") {
+            e.id = Calc.controller.generateId();
+            if (e.folderId) {
+                e.folderId = folderIdsMap[e.folderId];
+            }
+        }
+    });
+    baseState.expressions.list.push(...expressions);
+    return baseState;
+}
+function toast(message, opts) {
+    Calc.controller.dispatch({
+        type: "toast/show",
+        toast: { message, ...opts },
+    });
+}
