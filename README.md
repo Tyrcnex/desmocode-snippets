@@ -19,7 +19,7 @@ The console scripts in this repository are located in `/console_scripts`. They i
 - `dispatch.js`: A small tutorial to use Desmos's event listener, useful for making scripts that run when a certain event is triggered (e.g. clicking an expression, moving the graph, graph state change, etc.).
 - `get_context.js`: Gets the compute context (compiled version of Desmos functions).
 - `graph_history.js`: Desmos doesn't have an easy way to trace the graph history of a certain link, so this script does so.
-- `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). The script also adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, `step`, and `ID` constants. `ID` is a little hard to obtain, but you can either use Desmodder's "Calculator Settings > Show IDs" (recommended) or add "?showIDs" to the end of your URL, then read off the number that replaced the line number (this finicky behavior may be modified in the future).
+- `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). Modifies the first slider it finds in the expression list (RECOMMENDED: put your animation variable as the first expression). The script also adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, and `step` constants. 
 
 ## Stylesheets
 The stylesheets in this repository are located in `/styles`. They include:

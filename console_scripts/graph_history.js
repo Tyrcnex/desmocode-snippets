@@ -1,3 +1,7 @@
+// use it like this:
+// findHistory("https://www.desmos.com/calculator/abcdef0000")
+// you might have to wait a while
+
 const mLink = (calc, hash) => `https://www.desmos.com/${calc}/${hash}`;
 
 async function findHistory(
@@ -16,7 +20,3 @@ async function findHistory(
             else console.log(list.map(h => mLink(calc, h)).join("\n"));
         });
 }
-
-// use it like this:
-// findHistory("https://www.desmos.com/calculator/abcdef0000")
-// you might have to wait a while
