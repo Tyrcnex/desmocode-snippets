@@ -17,8 +17,8 @@ The userscripts in this repository are located in `/userscripts`. They include:
 ## Console scripts
 The console scripts in this repository are located in `/console_scripts`. They include:
 - `dispatch.js`: A small tutorial to use Desmos's event listener, useful for making scripts that run when a certain event is triggered (e.g. clicking an expression, moving the graph, graph state change, etc.).
-- `get_context.js`: Gets the compute context (compiled version of Desmos functions).
-- `graph_history.js`: Desmos doesn't have an easy way to trace the graph history of a certain link, so this script does so.
+- `get_compiled.js`: Gets the compute context (compiled Javascript of Desmos expressions). Sort of like ASM analysis for lower-level languages, but for Desmos expressions.
+- ~~`graph_history.js`: Desmos doesn't have an easy way to trace the graph history of a certain link, so this script does so.~~ *(whoops! the new graph link update broke this, we're working on fixing this)*
 - `whole_screen_rec.js`: Similar to Desmodder's video capture, but captures the whole screen (including the expression bar, top bar, etc.). Modifies the first slider it finds in the expression list (RECOMMENDED: put your animation variable as the first expression). The script also adds to Desmodder's frame creator, so you can modify frames from the UI. You need to modify the `min`, `max`, and `step` constants. 
 
 ## Stylesheets

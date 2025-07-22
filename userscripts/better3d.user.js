@@ -8,7 +8,7 @@
 // @grant        none
 // ==/UserScript==
 
-(f => f(f))(waitCalc => setTimeout(_ => Calc ? better3d() : waitCalc(), 200));
+(f => f(f))(waitCalc => setTimeout(_ => window.Calc ? better3d() : waitCalc(), 200));
 function better3d() {
     // query params
     Calc._calc.graphSettings.config.beta3d = true;
