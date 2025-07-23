@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better 3D
 // @version      0.2
-// @description  add beta3d query + shader things + much more
+// @description  add beta3d feature + shader things + much more
 // @run-at       document-start
 // @author       Tyrcnex
 // @match        https://www.desmos.com/3d*
@@ -10,7 +10,7 @@
 
 (f => f(f))(waitCalc => setTimeout(_ => window.Calc ? better3d() : waitCalc(), 200));
 function better3d() {
-    // query params
+    // enable beta3d
     Calc._calc.graphSettings.config.beta3d = true;
 
     //shader modification
