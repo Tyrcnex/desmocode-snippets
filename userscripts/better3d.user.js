@@ -2,13 +2,17 @@
 // @name         Better 3D
 // @version      0.2
 // @description  add beta3d feature + shader things + much more
-// @run-at       document-start
 // @author       Tyrcnex
 // @match        https://www.desmos.com/3d*
 // @grant        none
 // ==/UserScript==
 
-(f => f(f))(waitCalc => setTimeout(_ => window.Calc ? better3d() : waitCalc(), 200));
+const c = setInterval(_ => {
+    if (!window.Calc) return;
+    clearInterval(c);
+    better3d();
+}, 2000);
+
 function better3d() {
     // enable beta3d
     Calc._calc.graphSettings.config.beta3d = true;

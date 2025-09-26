@@ -6,7 +6,8 @@ You can find scripts to use in the console to leverage the Desmos API, install u
 
 ## Userscripts
 The userscripts in this repository are located in `/userscripts`. They include:
-- `better3d.user.js`: A collection of useful features for Desmos's 3D calculator. This includes the Beta3D feature (for access to shaders, surface opacity, etc.), as well as optional features such as ~~adding a background color~~ (this is now broken), changing the specular, etc.
+- `beta3d.user.js`: Small script for enabling Beta3D feature (for access to shaders, surface opacity, etc.). For more 3D features, use `better3d.user.js`.
+- `better3d.user.js`: A collection of useful features for Desmos's 3D calculator. This includes the Beta3D feature, as well as optional features such as ~~adding a background color~~ (this is now broken), changing the specular, etc.
 - `desmolocal.user.js`: Adds additional UI to save, load, or copy graphs in a JSON format. Useful if you want to save graphs to your own device or send a graph to someone as a file rather than a link. Also, vanilla Desmos now allows you to paste JSON into Desmos (pasting on a note on mobile also works!) and automatically replace the graph state, so this userscript is useful for copying that JSON, both on PC and mobile.
 - `fix_code_golf.js`: Turns off the Desmodder "Code Golf" plugin by default and binds the plugin toggle to "Alt + Q". This is a somewhat niche script and might become obsolete when Desmodder releases some updates.
 - `godmode.user.js`: Increases the list limit, shader list limit, and tolerance of "nested too deeply" error

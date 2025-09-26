@@ -13,7 +13,12 @@
 // compiled with ts, then modified a bit
 
 // wait for calc
-await new Promise((res) => setInterval(() => Calc && res(), 200)).then(setup);
+const c = setInterval(_ => {
+    if (!window.Calc) return;
+    clearInterval(c);
+    setup();
+}, 2000);
+
 function setup() {
     createContainers().forEach((container) => {
         let { saveBtn, loadBtn } = createButtons();

@@ -9,8 +9,6 @@
 // @grant        none
 // ==/UserScript==
 
-let oldConf = Calc.controller.getMathquillConfig;
-
 const allFunc = new Set("rtxsqpone rtxsqmone hypot logbase factorial polyGamma area perimeter pointDet pointDot pointPerp complexMultiply segment line ray vector vectorThreeD mathVector mathVectorThreeD vectorDisplacementAsPoint vectorThreeDDisplacementAsPoint basePointFromVector basePointFromVectorThreeD circle center radius arc arcCenter arcFirstPoint arcMiddlePoint arcThirdPoint arcOmega undirectedAngleMarker directedAngleMarker directedCoterminalAngle undirectedCoterminalAngle supplement directedAngleMarkerRawDelta undirectedAngleMarkerRawDelta directedAngleMarkerMultiplier undirectedAngleMarkerMultiplier polygonInteriorUndirectedAngles polygonInteriorDirectedAngles vertices segments scaleTangentTransformation scaleTangentPolygon scaleTangentSegment scaleTangentLine scaleTangentRay scaleTangentCircle scaleTangentArc scaleTangentDirectedAngleMarker scaleTangentUndirectedAngleMarker addTangentPolygon addTangentSegment addTangentSegmentThreeD addTangentLine addTangentRay addTangentVector addTangentCircle addTangentArc addTangentTransformation addTangentDirectedAngleMarker addTangentUndirectedAngleMarker segmentGlider segmentThreeDGlider lineGlider rayGlider circleGlider arcGlider polygonEdgeByParameter polygonGlider chooseNonIncidentPoint circleCircleIntersection circleArcIntersection circleLineIntersection arcCircleIntersection arcArcIntersection arcLineIntersection lineCircleIntersection lineArcIntersection lineLineIntersection lineFromSegment lineFromRay parallel perpendicular rawTransform rawTransformConj transformWithoutTranslation transformScaleFactor translation dilation rotation reflection compose inverse transformPoint transformSegment transformLine transformRay transformVector transformCircle transformArc transformPolygon transformAngleMarker transformDirectedAngleMarker distanceThreeD segmentThreeD triangle sphere argmin argmax upperQuantileIndex lowerQuantileIndex quartileIndex upperQuartileIndex lowerQuartileIndex normalcdf normalpdf binomcdf binompdf poissoncdf poissonpdf uniformcdf uniformpdf invT invPoisson invBinom invUniform tpdf tcdf invNorm normalSample uniformSample tSample poissonSample binomSample validateRangeLength validateSampleCount select sortPerm elementsAt uniquePerm restriction restrictionToBoolean".split(" "));
 
 // Generated with:
@@ -24,16 +22,21 @@ const CALC = window.location.href.replace(/[http|https]:\/\/www\.desmos\.com\//,
 const otherValues = CALC.startsWith("calculator") ? geoCalc.union(calc3D) : CALC.startsWith("geometry") ? regularCalc.union(calc3D) : regularCalc.union(geoCalc);
 const opNames = " " + [...allFunc.difference(otherValues)].join(" ");
 
-Calc.controller.getMathquillConfig = e => {
-    let conf = oldConf.call(Calc.controller, e);
-    conf.autoOperatorNames += opNames;
-    // hypot(a,b) -> sqrt(a^2+b^2)
-    // polyGamma(order, x)
-    // rtxsqpone(x) -> sqrt(x^2+1)
-    // rtxsqmone(x) -> sqrt(x^2-1)
-    // validateSampleCount is, in the words of Naitronbomb, "screwd up"
-    // sortPerm(a) -> sort([1...a.count], a) - 1
-    // argmin(a) -> [1...a.count][a=a.min][1]
-    // argmax(a) -> b[b.count] with b=[1...a.count][a=a.max]
-    return conf;
-}
+const c = setInterval(_ => {
+    if (!window.Calc) return;
+    let oldConf = Calc.controller.getMathquillConfig;
+    Calc.controller.getMathquillConfig = e => {
+        let conf = oldConf.call(Calc.controller, e);
+        conf.autoOperatorNames += opNames;
+        // hypot(a,b) -> sqrt(a^2+b^2)
+        // polyGamma(order, x)
+        // rtxsqpone(x) -> sqrt(x^2+1)
+        // rtxsqmone(x) -> sqrt(x^2-1)
+        // validateSampleCount is, in the words of Naitronbomb, "screwd up"
+        // sortPerm(a) -> sort([1...a.count], a) - 1
+        // argmin(a) -> [1...a.count][a=a.min][1]
+        // argmax(a) -> b[b.count] with b=[1...a.count][a=a.max]
+        return conf;
+    }
+    clearInterval(c);
+}, 2000)
