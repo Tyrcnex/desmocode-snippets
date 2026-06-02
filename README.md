@@ -17,6 +17,7 @@ The userscripts in this repository are located in `/userscripts`. They include:
 - `keyboard_input.user.js`: Adds keyboard input to Desmos. Paste `K_{eys}=[]` into your graph, and keycodes will now be updated in `K_{eys}`.
 - `lower_error_message.user.js`: Lowers the dang error message so you can actually see the expression.
 - `secret_functions.user.js`: Unlocks some secret functions that are disabled through Mathquill. These functions include `hypot`, `polyGamma`, `argmin`, and more. Some are unusable, such as `validateSampleCount`.
+- `table_to_csv.user.js`: Adds a button to download table expressions to CSV.
 
 ## Console scripts
 The console scripts in this repository are located in `/console_scripts`. They include:
